@@ -4,13 +4,13 @@ import json
 
    Object representing an ipv4 address and port
 """
-class IPV4Address:
-   def __init__(self, url, port):
-      if not isinstance(url, str):
-         raise Exception("URL Must be a string")
+class IPV4Connection:
+   def __init__(self, address, port):
+      if not isinstance(address, str):
+         raise Exception("ADDRESS Must be a string")
       if not isinstance(port, int):
          raise Exception("PORT Must be an int")
-      self.url = url
+      self.address = address
       self.port = port
 
 """Documentation for a class.
@@ -388,4 +388,40 @@ class ControllerV1:
       self.description = decoded["description"]
       for action in decoded["actions"]:
          self.actions.append(ControllerV1ActionEntry(action["id"], action["description"]))
+      return True
+
+      
+"""Documentation for a class.
+
+   Object representing a V1 Heartbeat
+"""
+class HeartbeatV1:
+   def __init__(self, id):
+      if not isinstance(id, str):
+         raise Exception("ID Must be a string")
+      self.id = id
+
+   """Documentation for a method.
+
+      Encode heartbeat to json string
+      returns encoded heartbeat
+   """
+   def encode(self):
+      encoded = "{{\"heartbeat\":\"{0}\"}}".format(
+         self.id
+      )
+      return encoded
+
+   """Documentation for a method.
+
+      Attempt to build a heartbeat from an encoded string
+      returns true iff the heartbeat could be built from the string
+   """
+   def decode_from(self, encoded):
+      decoded = json.loads(encoded)
+      if decoded is None:
+         print("Failed to parse data")
+         return False
+
+      self.id = decoded["heartbeat"]
       return True

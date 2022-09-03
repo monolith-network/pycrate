@@ -1,6 +1,6 @@
 from pycrate import *
 
-monolith = Monolith(IPV4Address("0.0.0.0", 8080))
+monolith = Monolith(IPV4Connection("0.0.0.0", 8080))
 
 def test_node_v1():
    listed_sensors = [
@@ -101,6 +101,12 @@ def test_controller_v1():
       assert(new_controller.actions[x].id == controller.actions[x].id)
       assert(new_controller.actions[x].description == controller.actions[x].description)
 
+def test_heartbeat_v1():
+   heartbeat = HeartbeatV1("0000-0000-0000-0000")
+   decoded = HeartbeatV1("")
+   assert(decoded.decode_from(heartbeat.encode()))
+   assert(decoded.id == heartbeat.id)
+
 print("Test NodeV1 type")
 test_node_v1()
 
@@ -115,3 +121,6 @@ test_action_v1()
 
 print("Test ControllerV1 type")
 test_controller_v1()
+
+print("Test HeartbeatV1 type")
+test_heartbeat_v1()
