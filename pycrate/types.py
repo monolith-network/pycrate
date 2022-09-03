@@ -28,7 +28,7 @@ class NodeV1SensorEntry:
       self.id = id
       self.type = type
       self.description = description
-      
+
    """Documentation for a method.
 
       Encode action to json string
