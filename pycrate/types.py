@@ -388,14 +388,18 @@ class ControllerV1ActionEntry:
    Object representing a V1 Controller
 """
 class ControllerV1:
-   def __init__(self, id, description):
+   def __init__(self, id, description, connection):
       if not isinstance(id, str):
          raise Exception("ID Must be an string")
       if not isinstance(description, str):
          raise Exception("DESCRIPTION Must be a string")
+      if not isinstance(connection, IPV4Connection):
+         raise Exception("CONECTION Must be a IPV4Connection")
 
       self.id = id
       self.description = description
+      self.ip = connection.address
+      self.port = connection.port
       self.actions = []
 
    """Documentation for a method.
@@ -421,7 +425,7 @@ class ControllerV1:
       returns encoded controller
    """
    def encode(self):
-      encoded = "{{\"id\":\"{0}\",\"description\":\"{1}\",\"actions\":[".format(self.id, self.description)
+      encoded = "{{\"id\":\"{0}\",\"description\":\"{1}\",\"ip\":\"{2}\",\"port\":{3},\"actions\":[".format(self.id, self.description, self.ip, self.port, )
       for action in self.actions:
          encoded += action.encode() + ","
       if len(self.actions) > 0:
@@ -443,6 +447,8 @@ class ControllerV1:
 
       self.id = decoded["id"]
       self.description = decoded["description"]
+      self.ip = decoded["ip"]
+      self.port = decoded["port"]
       for action in decoded["actions"]:
          self.actions.append(ControllerV1ActionEntry(action["id"], action["description"]))
       return True

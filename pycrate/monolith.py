@@ -93,16 +93,40 @@ class Monolith:
 
    """Documentation for a method.
 
+      Register a controller with Monolith
+      Returns None iff the command fails,
+              True if the item was added,
+              and False otherwise
+   """
+   def registrar_add_controller(self, controller):
+      if not isinstance(controller, ControllerV1):
+         raise Exception("NODE must be of type controller")
+
+      encoded = controller.encode()
+
+      response = self.fetch_endpoint("/registrar/add/" + controller.id + "/" + encoded)
+
+      if response is None:
+         return None
+
+      decoded_response = json.loads(response)
+
+      if decoded_response["status"] == 200 and decoded_response["data"] == "success":
+         return True
+      return False
+
+   """Documentation for a method.
+
       Probe the registrar for a node
       Returns None iff the command fails,
               True if the item was found
               and False if the item was not found
    """
-   def registrar_probe(self, node):
-      if not isinstance(node, NodeV1):
-         raise Exception("NODE must be of type NodeV1")
+   def registrar_probe(self, id):
+      if not isinstance(id, str):
+         raise Exception("ID must be of type str")
 
-      response = self.fetch_endpoint("/registrar/probe/" + node.id)
+      response = self.fetch_endpoint("/registrar/probe/" + id)
 
       if response is None:
          return None
@@ -144,6 +168,35 @@ class Monolith:
 
    """Documentation for a method.
 
+      Attempt to retrieve a controller from the registrar
+      Returns None if the command fails, or if the returned 
+      data from the server was insufficient to construct a controller.
+      If everything works, a ControllerV1 object will be returned
+   """
+   def registrar_fetch_controller(self, id):
+      if not isinstance(id, str):
+         raise Exception("ID must be of type string")
+      
+      response = self.fetch_endpoint("/registrar/fetch/" + id)
+
+      if response is None:
+         return None
+
+      decoded_response = json.loads(response)
+
+      # A status indicates that the query worked but there was no node
+      if "status" in decoded_response:
+         return None
+
+      # Attempt to convert the reponse into a controller
+      controller = ControllerV1("","",IPV4Connection("", 0))
+      if not controller.decode_from(response):
+         raise Exception("Data from server did not match a V1 Controller (is something on fire?)")
+
+      return controller
+
+   """Documentation for a method.
+
       Delete a node. 
       Returns None iff the command fails,
       True if the command worked, False otherwise
@@ -153,7 +206,7 @@ class Monolith:
              delete something that didn't exist, it will still return
              success as long as no internal errors occurred.
    """
-   def registrar_delete_node(self, id):
+   def registrar_delete(self, id):
       if not isinstance(id, str):
          raise Exception("ID must be of type string")
       

@@ -85,12 +85,12 @@ def test_controller_v1():
       ControllerV1ActionEntry("4", "test action"),
    ]
 
-   controller = ControllerV1("0000-0000-0000-0000", "A test controller")
+   controller = ControllerV1("0000-0000-0000-0000", "A test controller", IPV4Connection("0.0.0.0", 6969))
 
    for action in listed_actions:
       assert(controller.add_action(action))
 
-   new_controller = ControllerV1("","")
+   new_controller = ControllerV1("","", IPV4Connection("bunk", 0))
 
    assert(new_controller.decode_from(controller.encode()))
    assert(new_controller.id == controller.id)

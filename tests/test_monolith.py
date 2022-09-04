@@ -55,10 +55,10 @@ def test_registrar():
    assert(server.registrar_add_node(node))
    
    # Probe for the node
-   assert(server.registrar_probe(node))
+   assert(server.registrar_probe(node.id))
 
    # Check for non-added node
-   assert(not server.registrar_probe(bunk_node))
+   assert(not server.registrar_probe(bunk_node.id))
 
    # Fetch the node
    fetched_node = server.registrar_fetch_node(test_node_id)
@@ -75,10 +75,53 @@ def test_registrar():
       assert(fetched_node.sensors[x].type == node.sensors[x].type)
 
    # Delete item from registry
-   assert(server.registrar_delete_node(test_node_id))
+   assert(server.registrar_delete(test_node_id))
 
    # Ensure its gone
    assert(server.registrar_fetch_node(test_node_id) is None)
+
+   # --------------- Now do the same with a controller
+
+   listed_actions = [
+      ControllerV1ActionEntry("0", "test action"),
+      ControllerV1ActionEntry("1", "test action")
+   ]
+
+   test_controller_id = "0000-0000-0000-FFFF"
+   controller = ControllerV1(test_controller_id, "A test controller", IPV4Connection("0.0.0.0", 6969))
+   bunk_controller = ControllerV1("bunk", "I don't exist", IPV4Connection("", 0))
+
+   for action in listed_actions:
+      assert(controller.add_action(action))
+
+   # Register the controller
+   assert(server.registrar_add_controller(controller))
+   
+   # Probe for the controller
+   assert(server.registrar_probe(controller.id))
+
+   # Check for non-added controller
+   assert(not server.registrar_probe(bunk_controller.id))
+
+   # Fetch the controller
+   fetched_controller = server.registrar_fetch_controller(test_controller_id)
+
+   assert(fetched_controller is not None)
+
+   # Compare the nodes and ensure no data loss
+   assert(fetched_controller.id == controller.id)
+   assert(fetched_controller.description == controller.description)
+   assert(len(fetched_controller.actions) == len(controller.actions))
+
+   for x in range(0, len(controller.actions)):
+      assert(fetched_controller.actions[x].id == controller.actions[x].id)
+      assert(fetched_controller.actions[x].description == controller.actions[x].description)
+
+   # Delete item from registry
+   assert(server.registrar_delete(test_controller_id))
+
+   # Ensure its gone
+   assert(server.registrar_fetch_controller(test_node_id) is None)
 
 '''
    Test the stream related endpoints
@@ -234,4 +277,4 @@ test_streams()
 print("[PASS]")
 
 # Remove the node
-assert(server.registrar_delete_node(metric_node.id))
+assert(server.registrar_delete(metric_node.id))
