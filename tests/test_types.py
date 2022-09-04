@@ -107,6 +107,16 @@ def test_heartbeat_v1():
    assert(decoded.decode_from(heartbeat.encode()))
    assert(decoded.id == heartbeat.id)
 
+def test_version_v1():
+   v = VersionV1("test_app", "91030123", "1", "2", "500")
+   decoded = VersionV1("", "", "", "", "")
+   assert(decoded.decode_from(v.encode()))
+   assert(v.name == decoded.name)
+   assert(v.hash == decoded.hash)
+   assert(v.major == decoded.major)
+   assert(v.minor == decoded.minor)
+   assert(v.patch == decoded.patch)
+
 print("Test NodeV1 type")
 test_node_v1()
 
@@ -124,3 +134,6 @@ test_controller_v1()
 
 print("Test HeartbeatV1 type")
 test_heartbeat_v1()
+
+print("Test VersionV1 type")
+test_version_v1()

@@ -45,6 +45,30 @@ class Monolith:
 
    """Documentation for a method.
 
+      Attempt to retrieve the version info of the endpoint
+      Returns None iff the command fails,
+      True if the command worked, False otherwise
+   """
+   def get_version(self):
+
+      s_time = str(time)
+      response = self.fetch_endpoint("/version")
+      if response is None:
+         return None
+
+      decoded_response = json.loads(response)
+
+      if decoded_response["status"] == 200:
+         data = decoded_response["data"]
+         return VersionV1(data["name"], 
+                           data["hash"],
+                           data["version_major"],
+                           data["version_minor"],
+                           data["version_patch"])
+      return False
+
+   """Documentation for a method.
+
       Register a node with Monolith
       Returns None iff the command fails,
               True if the item was added,

@@ -15,6 +15,63 @@ class IPV4Connection:
 
 """Documentation for a class.
 
+   Object representing a V1 version
+"""
+class VersionV1:
+   def __init__(self, name, hash, major, minor, patch):
+      if not isinstance(name, str):
+         raise Exception("NAME be a string")
+      if not isinstance(hash, str):
+         raise Exception("HASH be a string")
+      if not isinstance(major, str):
+         raise Exception("MAJOR be a string")
+      if not isinstance(minor, str):
+         raise Exception("MINOR be a string")
+      if not isinstance(patch, str):
+         raise Exception("PATCH be a string")
+
+      self.name = name
+      self.hash = hash
+      self.major = major
+      self.minor = minor
+      self.patch = patch
+
+   """Documentation for a method.
+
+      Encode version to json string
+      returns encoded version
+   """
+   def encode(self):
+      encoded = "{{\"name\":\"{0}\",\"hash\":\"{1}\",\"version_major\":\"{2}\", \
+                  \"version_minor\":\"{3}\",\"version_patch\":\"{4}\"}}".format(
+         self.name, 
+         self.hash, 
+         self.major,
+         self.minor,
+         self.patch
+      )
+      return encoded
+
+   """Documentation for a method.
+
+      Attempt to build a version from an encoded string
+      returns true iff the version could be built from the string
+   """
+   def decode_from(self, encoded):
+      decoded = json.loads(encoded)
+      if decoded is None:
+         print("Failed to parse data")
+         return False
+
+      self.name = decoded["name"]
+      self.hash = decoded["hash"]
+      self.major = decoded["version_major"]
+      self.minor = decoded["version_minor"]
+      self.patch = decoded["version_patch"]
+      return True
+
+"""Documentation for a class.
+
    Object representing a V1 Node Sensor entry
 """
 class NodeV1SensorEntry:

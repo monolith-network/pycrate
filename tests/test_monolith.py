@@ -197,6 +197,19 @@ database. Purge the database of test data and try again
       assert(sensor.id in result)
 
 
+def test_version():
+   result = server.get_version()
+   assert(result is not None)
+   assert(result is not False)
+   assert(result.name == "Monolith")
+   print(result.name + " | version: " + result.major + "." + result.minor + "." + result.patch + " | build hash: " + result.hash)
+
+# ---------------------------------------------------------------------------------
+
+print("Test endpoint: Version")
+test_version()
+print("[PASS]")
+
 print("Test endpoint: Registrar")
 test_registrar()
 print("[PASS]")
