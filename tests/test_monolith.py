@@ -2,6 +2,9 @@
    This test is to check the functionality of the 
    pycrate monolith object, but it also happens to be 
    a great way to test the monolith itsself to a degree
+
+   Monolith endpoint to test against should have metric saving enabled
+   with an infinite metric lifetime
 '''
 
 from sys import exit
@@ -159,7 +162,8 @@ def test_metric_fetch():
    retrieval_error_message = '''
 Retrieved metrics are not the same in count as we've submitted. 
 This could be because a faild test has left old metrics in the monolith 
-metric database. Purge the database of test data and try again
+metric database, or it could be because metric storage is disabled on monolith.
+Purge the database of test data and ensure metric storage is enabled to try again
 '''
 
    # Range fetch
