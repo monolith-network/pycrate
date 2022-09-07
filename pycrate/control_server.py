@@ -24,6 +24,7 @@ def new_conn(socket, callback_fn):
          action = ActionV1(0,"","",0.0)
          if action.decode_from(actual_data.decode("utf-8")):
             callback_fn(action)
+            print("Completed")
 
 def start(connection, callback_fn):
    if not isinstance(connection, IPV4Connection):
